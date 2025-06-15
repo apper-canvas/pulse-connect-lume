@@ -30,7 +30,7 @@ const Input = forwardRef(({
     props.onChange?.(e);
   };
 
-  return (
+return (
     <div className={`relative ${containerClassName}`}>
       {label && (
         <motion.label
@@ -41,7 +41,9 @@ const Input = forwardRef(({
             color: isFocused ? '#6366F1' : error ? '#EF4444' : '#6B7280'
           }}
           transition={{ duration: 0.2 }}
-          className="absolute left-3 pointer-events-none z-10 bg-white px-1 font-medium"
+          className={`absolute pointer-events-none z-10 bg-white px-1 font-medium ${
+            icon ? 'left-10' : 'left-3'
+          }`}
           style={{ transformOrigin: 'left center' }}
         >
           {label}
@@ -58,7 +60,7 @@ const Input = forwardRef(({
         <input
           ref={ref}
           type={type}
-          placeholder={label ? '' : placeholder}
+          placeholder={(!label || (!isFocused && !hasValue)) ? placeholder : ''}
           className={`w-full px-3 py-3 border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${
             icon ? 'pl-10' : ''
           } ${
