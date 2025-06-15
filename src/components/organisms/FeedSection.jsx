@@ -7,7 +7,7 @@ import EmptyState from '@/components/molecules/EmptyState';
 import ErrorState from '@/components/molecules/ErrorState';
 import { postService, userService, followService } from '@/services';
 
-const FeedSection = ({ feedType = 'home' }) => {
+const FeedSection = ({ feedType = 'home', topic = null }) => {
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState({});
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ const FeedSection = ({ feedType = 'home' }) => {
 
   useEffect(() => {
     loadFeed();
-  }, [feedType]);
+  }, [feedType, topic]);
 
   const loadFeed = async () => {
     try {
@@ -26,11 +26,14 @@ const FeedSection = ({ feedType = 'home' }) => {
       let postsData;
       const usersData = await userService.getAll();
       
-      if (feedType === 'home') {
+if (feedType === 'home') {
         // Get posts from followed users
         const followingIds = await followService.getFollowingIds(currentUserId);
         followingIds.push(currentUserId); // Include own posts
         postsData = await postService.getFeedPosts(followingIds);
+      } else if (topic) {
+        // Get posts filtered by topic
+        postsData = await postService.getPostsByTopic(topic);
       } else {
         // Get all posts for explore
         postsData = await postService.getAll();

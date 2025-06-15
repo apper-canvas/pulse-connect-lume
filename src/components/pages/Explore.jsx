@@ -8,15 +8,27 @@ import ApperIcon from '@/components/ApperIcon';
 const Explore = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState(null);
 
   const handleUserSelect = (user) => {
     setSearchResults([user]);
     setShowSearchResults(true);
+    setSelectedTopic(null);
   };
 
   const clearSearch = () => {
     setSearchResults([]);
     setShowSearchResults(false);
+  };
+
+  const handleTopicSelect = (topic) => {
+    setSelectedTopic(topic);
+    setShowSearchResults(false);
+    setSearchResults([]);
+  };
+
+  const clearTopic = () => {
+    setSelectedTopic(null);
   };
 
   return (
@@ -69,14 +81,27 @@ const Explore = () => {
           </motion.div>
         )}
 
-        {/* Trending Topics */}
+{/* Trending Topics */}
         {!showSearchResults && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <h2 className="text-lg font-semibold text-surface-900 mb-4">Trending Topics</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-surface-900">Trending Topics</h2>
+              {selectedTopic && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  onClick={clearTopic}
+                  className="text-sm text-primary hover:text-primary/80 font-medium flex items-center space-x-1"
+                >
+                  <ApperIcon name="X" className="w-4 h-4" />
+                  <span>Clear filter</span>
+                </motion.button>
+              )}
+            </div>
             <div className="flex flex-wrap gap-3">
               {[
                 { tag: '#design', count: '12.4K' },
@@ -92,11 +117,20 @@ const Explore = () => {
                   transition={{ delay: index * 0.1 }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-surface rounded-full px-4 py-2 border border-surface-200 hover:border-primary hover:bg-primary/5 transition-all duration-200"
+                  onClick={() => handleTopicSelect(topic.tag)}
+                  className={`rounded-full px-4 py-2 border transition-all duration-200 ${
+                    selectedTopic === topic.tag
+                      ? 'bg-primary text-white border-primary'
+                      : 'bg-surface border-surface-200 hover:border-primary hover:bg-primary/5'
+                  }`}
                 >
                   <div className="text-left">
-                    <p className="font-medium text-surface-900">{topic.tag}</p>
-                    <p className="text-sm text-surface-500">{topic.count} posts</p>
+                    <p className={`font-medium ${
+                      selectedTopic === topic.tag ? 'text-white' : 'text-surface-900'
+                    }`}>{topic.tag}</p>
+                    <p className={`text-sm ${
+                      selectedTopic === topic.tag ? 'text-white/80' : 'text-surface-500'
+                    }`}>{topic.count} posts</p>
                   </div>
                 </motion.button>
               ))}
@@ -104,12 +138,20 @@ const Explore = () => {
           </motion.div>
         )}
 
-        {/* Recent Posts */}
+{/* Recent Posts */}
         <div>
           <h2 className="text-lg font-semibold text-surface-900 mb-6">
-            {showSearchResults ? 'All Posts' : 'Recent Posts'}
+            {showSearchResults 
+              ? 'All Posts' 
+              : selectedTopic 
+                ? `Posts about ${selectedTopic}` 
+                : 'Recent Posts'
+            }
           </h2>
-          <FeedSection feedType="explore" />
+          <FeedSection 
+            feedType="explore" 
+            topic={selectedTopic}
+          />
         </div>
       </div>
     </div>

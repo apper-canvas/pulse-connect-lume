@@ -32,6 +32,17 @@ class PostService {
     const feedPosts = this.data.filter(post => followingIds.includes(post.userId));
     const sorted = feedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     return [...sorted];
+}
+
+  async getPostsByTopic(topic) {
+    await delay(350);
+    const topicPosts = this.data.filter(post => {
+      const content = post.content.toLowerCase();
+      const searchTopic = topic.toLowerCase().replace('#', '');
+      return content.includes(searchTopic) || content.includes(topic.toLowerCase());
+    });
+    const sorted = topicPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    return [...sorted];
   }
 
   async create(postData) {
