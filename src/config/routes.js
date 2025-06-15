@@ -5,11 +5,11 @@ import Profile from '@/components/pages/Profile';
 import CreatePost from '@/components/pages/CreatePost';
 import Settings from '@/components/pages/Settings';
 
-export const routes = {
+const routes = {
   home: {
     id: 'home',
     label: 'Home',
-    path: '/home',
+    path: '/',
     icon: 'Home',
     component: Home
   },
