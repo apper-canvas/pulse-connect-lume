@@ -3,6 +3,7 @@ import Explore from '@/components/pages/Explore';
 import Messages from '@/components/pages/Messages';
 import Profile from '@/components/pages/Profile';
 import CreatePost from '@/components/pages/CreatePost';
+import Settings from '@/components/pages/Settings';
 
 export const routes = {
   home: {
@@ -39,6 +40,13 @@ export const routes = {
     path: '/profile',
     icon: 'User',
     component: Profile
+  },
+  settings: {
+    id: 'settings',
+    label: 'Settings',
+    path: '/settings',
+    icon: 'Settings',
+    component: Settings
   }
 };
 

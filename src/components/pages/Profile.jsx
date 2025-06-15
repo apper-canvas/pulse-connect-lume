@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import Avatar from '@/components/atoms/Avatar';
@@ -12,6 +13,7 @@ import ApperIcon from '@/components/ApperIcon';
 import { userService, postService, followService } from '@/services';
 
 const Profile = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -145,9 +147,13 @@ const Profile = () => {
                     onClick={() => setShowCreateModal(true)}
                   >
                     <ApperIcon name="Plus" className="w-4 h-4 mr-2" />
-                    New Post
+New Post
                   </Button>
-                  <Button variant="secondary" size="sm">
+                  <Button 
+                    variant="secondary" 
+                    size="sm"
+                    onClick={() => navigate('/settings')}
+                  >
                     <ApperIcon name="Settings" className="w-4 h-4" />
                   </Button>
                 </div>

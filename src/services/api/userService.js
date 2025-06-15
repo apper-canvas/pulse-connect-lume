@@ -85,8 +85,32 @@ class UserService {
     if (followerIndex !== -1) {
       this.data[followerIndex].followersCount += followerDelta;
     }
+return true;
+  }
+  
+  async updateBio(id, bioData) {
+    await delay(400);
+    const index = this.data.findIndex(item => item.id === id);
+    if (index === -1) throw new Error('User not found');
     
-    return true;
+    const updates = {
+      bio: bioData.bio || '',
+      website: bioData.website || '',
+      location: bioData.location || '',
+      displayName: bioData.displayName || this.data[index].displayName
+    };
+    
+    this.data[index] = { ...this.data[index], ...updates };
+    return { ...this.data[index] };
+  }
+  
+  async updateAvatar(id, avatarUrl) {
+    await delay(300);
+    const index = this.data.findIndex(item => item.id === id);
+    if (index === -1) throw new Error('User not found');
+    
+    this.data[index] = { ...this.data[index], avatar: avatarUrl };
+    return { ...this.data[index] };
   }
 }
 
