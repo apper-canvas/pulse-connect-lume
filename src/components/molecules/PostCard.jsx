@@ -59,7 +59,7 @@ const handleCommentAdded = () => {
     }
   };
 
-  const handleShare = async () => {
+const handleShare = async () => {
     try {
       const shareData = {
         title: `Post by ${user?.name || 'Unknown User'}`,
@@ -67,19 +67,40 @@ const handleCommentAdded = () => {
         url: `${window.location.origin}/post/${post?.id || ''}`
       };
 
-      if (navigator.share) {
-        await navigator.share(shareData);
-        toast.success('Post shared successfully!');
+      // Check if Web Share API is available and we're in a secure context
+      if (navigator.share && window.isSecureContext) {
+        // Additional check: Web Share API requires user activation
+        try {
+          await navigator.share(shareData);
+          toast.success('Post shared successfully!');
+        } catch (shareError) {
+          if (shareError.name === 'NotAllowedError') {
+            // Permission denied or not allowed - fall back to clipboard
+            if (navigator.clipboard && window.isSecureContext) {
+              await navigator.clipboard.writeText(shareData.url);
+              toast.success('Sharing not permitted. Post URL copied to clipboard instead!');
+            } else {
+              toast.error('Sharing is not available in this context.');
+            }
+          } else if (shareError.name !== 'AbortError') {
+            // Other sharing errors (not user cancellation)
+            throw shareError;
+          }
+          // AbortError (user cancelled) - do nothing
+        }
       } else {
-        // Fallback to clipboard
-        await navigator.clipboard.writeText(shareData.url);
-        toast.success('Post URL copied to clipboard!');
+        // Fallback to clipboard if Web Share API not available or not secure context
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(shareData.url);
+          toast.success('Post URL copied to clipboard!');
+        } else {
+          // Final fallback - show URL in alert for user to copy manually
+          window.prompt('Copy this URL to share the post:', shareData.url);
+        }
       }
     } catch (error) {
-      if (error.name !== 'AbortError') {
-        console.error('Error sharing post:', error);
-        toast.error('Failed to share post. Please try again.');
-      }
+      console.error('Error sharing post:', error);
+      toast.error('Failed to share post. Please try again.');
     }
   };
   return (
