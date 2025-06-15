@@ -67,7 +67,7 @@ const handleShare = async () => {
         url: `${window.location.origin}/post/${post?.id || ''}`
       };
 
-      // Check if Web Share API is available and we're in a secure context
+// Check if Web Share API is available and we're in a secure context
       if (navigator.share && window.isSecureContext) {
         // Additional check: Web Share API requires user activation
         try {
@@ -75,10 +75,22 @@ const handleShare = async () => {
           toast.success('Post shared successfully!');
         } catch (shareError) {
           if (shareError.name === 'NotAllowedError') {
-            // Permission denied or not allowed - fall back to clipboard
+            // Permission denied or not allowed - fall back to clipboard with permission check
             if (navigator.clipboard && window.isSecureContext) {
-              await navigator.clipboard.writeText(shareData.url);
-              toast.success('Sharing not permitted. Post URL copied to clipboard instead!');
+              try {
+                // Check clipboard permissions first
+                const permissionStatus = await navigator.permissions.query({ name: 'clipboard-write' });
+                if (permissionStatus.state === 'granted' || permissionStatus.state === 'prompt') {
+                  await navigator.clipboard.writeText(shareData.url);
+                  toast.success('Sharing not permitted. Post URL copied to clipboard instead!');
+                } else {
+                  // Clipboard permission denied - use manual fallback
+                  window.prompt('Copy this URL to share the post:', shareData.url);
+                }
+              } catch (clipboardError) {
+                // Clipboard permission check failed or writeText failed
+                window.prompt('Copy this URL to share the post:', shareData.url);
+              }
             } else {
               toast.error('Sharing is not available in this context.');
             }
@@ -91,8 +103,20 @@ const handleShare = async () => {
       } else {
         // Fallback to clipboard if Web Share API not available or not secure context
         if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(shareData.url);
-          toast.success('Post URL copied to clipboard!');
+          try {
+            // Check clipboard permissions first
+            const permissionStatus = await navigator.permissions.query({ name: 'clipboard-write' });
+            if (permissionStatus.state === 'granted' || permissionStatus.state === 'prompt') {
+              await navigator.clipboard.writeText(shareData.url);
+              toast.success('Post URL copied to clipboard!');
+            } else {
+              // Clipboard permission denied - use manual fallback
+              window.prompt('Copy this URL to share the post:', shareData.url);
+            }
+          } catch (clipboardError) {
+            // Clipboard permission check failed or writeText failed
+            window.prompt('Copy this URL to share the post:', shareData.url);
+          }
         } else {
           // Final fallback - show URL in alert for user to copy manually
           window.prompt('Copy this URL to share the post:', shareData.url);
@@ -103,7 +127,7 @@ const handleShare = async () => {
       toast.error('Failed to share post. Please try again.');
     }
   };
-  return (
+return (
     <motion.div
     initial={{
         opacity: 0,
@@ -123,9 +147,9 @@ const handleShare = async () => {
             hasStory={Math.random() > 0.5} />
         <div className="flex-1 min-w-0">
             <h4 className="font-semibold text-surface-900 truncate">
-{user?.displayName || "Unknown User"}
+                {user?.displayName || "Unknown User"}
             </h4>
-            <p className="text-sm text-surface-500">@{user?.username} • {formatDistanceToNow(new Date(post.createdAt), {
+            <p className="text-sm text-surface-500">@{user?.username}• {formatDistanceToNow(new Date(post.createdAt), {
                     addSuffix: true
                 })}
             </p>
