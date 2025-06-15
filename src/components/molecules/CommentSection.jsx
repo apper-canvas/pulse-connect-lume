@@ -47,7 +47,7 @@ const CommentSection = ({ postId, onCommentAdded }) => {
     e.preventDefault();
     if (!newComment.trim() || submitting) return;
 
-    const currentUserId = '1'; // Demo current user
+const currentUserId = '1'; // Demo current user
     
     try {
       setSubmitting(true);
@@ -70,11 +70,10 @@ const CommentSection = ({ postId, onCommentAdded }) => {
       toast.success('Comment added!');
     } catch (error) {
       toast.error('Failed to add comment');
-} finally {
+    } finally {
       setSubmitting(false);
     }
   };
-
   const handleLike = async (commentId) => {
     const currentUserId = '1'; // Demo current user
     
@@ -256,10 +255,10 @@ const CommentSection = ({ postId, onCommentAdded }) => {
                             Cancel
                           </Button>
                         </div>
-                      </div>
+</div>
                     )}
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </AnimatePresence>
