@@ -57,10 +57,10 @@ return (
           </div>
         )}
         
-        <input
+<input
           ref={ref}
           type={type}
-          placeholder={(!label || (!isFocused && !hasValue)) ? placeholder : ''}
+          placeholder={!isFocused ? placeholder : ''}
           className={`w-full px-3 py-3 border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${
             icon ? 'pl-10' : ''
           } ${

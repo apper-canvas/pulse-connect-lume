@@ -249,8 +249,7 @@ const handleAvatarUpload = async (event) => {
                   placeholder="Your display name"
                   error={bioData.displayName.trim().length > 0 && bioData.displayName.trim().length < 2 ? 'Display name must be at least 2 characters' : ''}
                 />
-
-                <div>
+<div>
                   <label className="block text-sm font-medium text-surface-700 mb-2">
                     Bio {bioData.bio.length > 0 && (
                       <span className={`text-xs ${bioData.bio.length > 160 ? 'text-error' : 'text-surface-500'}`}>
@@ -269,6 +268,7 @@ const handleAvatarUpload = async (event) => {
                     }`}
                     rows={4}
                     maxLength={200}
+                    onFocus={() => {}}
                   />
                   {bioData.bio.length > 160 && (
                     <p className="mt-1 text-sm text-error">Bio must be 160 characters or less</p>
