@@ -124,18 +124,6 @@ const handleAvatarUpload = async (event) => {
     // Reset the input value to allow re-selecting the same file
     event.target.value = '';
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
-      return;
-    }
-
-    // Validate file size (5MB limit)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image must be less than 5MB');
-      return;
-    }
-
     try {
       setUploadingAvatar(true);
       
@@ -147,25 +135,24 @@ const handleAvatarUpload = async (event) => {
         URL.revokeObjectURL(avatarData.selectedPreset);
       }
       
-      // Convert file to base64 for persistence
-      const base64Url = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      // Update avatar through service layer (handles validation and conversion)
+      const updatedUser = await userService.updateAvatar(user.id, file);
       
-      // Update state with both preview and persistent URLs
+      // Update user state and avatar preview
+      setUser(updatedUser);
       setAvatarData(prev => ({
         ...prev,
-        selectedPreset: base64Url,
-        uploadedFile: file
+        currentAvatar: updatedUser.avatar,
+        selectedPreset: updatedUser.avatar
       }));
       
-      toast.success('Image uploaded successfully!');
+      // Clean up the preview URL since we now have the persistent URL
+      URL.revokeObjectURL(previewUrl);
+      
+      toast.success('Avatar updated successfully!');
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error('Failed to upload image. Please try again.');
+      toast.error(error.message || 'Failed to upload avatar. Please try again.');
     } finally {
       setUploadingAvatar(false);
     }
