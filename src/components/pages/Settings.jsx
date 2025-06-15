@@ -117,9 +117,12 @@ const Settings = () => {
     }
   };
 
-  const handleAvatarUpload = async (event) => {
+const handleAvatarUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
+
+    // Reset the input value to allow re-selecting the same file
+    event.target.value = '';
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
@@ -136,19 +139,33 @@ const Settings = () => {
     try {
       setUploadingAvatar(true);
       
-      // Simulate upload delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Create object URL for immediate preview
+      const previewUrl = URL.createObjectURL(file);
       
-      // Create object URL for preview
-      const imageUrl = URL.createObjectURL(file);
+      // Clean up previous object URL to prevent memory leaks
+      if (avatarData.selectedPreset && avatarData.selectedPreset.startsWith('blob:')) {
+        URL.revokeObjectURL(avatarData.selectedPreset);
+      }
+      
+      // Convert file to base64 for persistence
+      const base64Url = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      
+      // Update state with both preview and persistent URLs
       setAvatarData(prev => ({
         ...prev,
-        selectedPreset: imageUrl
+        selectedPreset: base64Url,
+        uploadedFile: file
       }));
       
       toast.success('Image uploaded successfully!');
     } catch (error) {
-      toast.error('Failed to upload image');
+      console.error('Upload error:', error);
+      toast.error('Failed to upload image. Please try again.');
     } finally {
       setUploadingAvatar(false);
     }

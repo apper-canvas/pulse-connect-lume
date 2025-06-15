@@ -104,13 +104,45 @@ return true;
     return { ...this.data[index] };
   }
   
-  async updateAvatar(id, avatarUrl) {
+async updateAvatar(id, avatarInput) {
     await delay(300);
     const index = this.data.findIndex(item => item.id === id);
     if (index === -1) throw new Error('User not found');
     
+    let avatarUrl = avatarInput;
+    
+// Handle File object upload
+    if (typeof File !== 'undefined' && avatarInput instanceof File) {
+      // Validate file type
+      if (!avatarInput.type.startsWith('image/')) {
+        throw new Error('Invalid file type. Please select an image file.');
+      }
+      
+      // Validate file size (5MB limit)
+      if (avatarInput.size > 5 * 1024 * 1024) {
+        throw new Error('File size too large. Please select an image under 5MB.');
+      }
+      
+      // Convert to base64 for persistence
+      avatarUrl = await this.fileToBase64(avatarInput);
+    }
+    
     this.data[index] = { ...this.data[index], avatar: avatarUrl };
     return { ...this.data[index] };
+  }
+  
+// Helper method to convert File to base64
+  async fileToBase64(file) {
+    if (typeof FileReader === 'undefined') {
+      throw new Error('FileReader is not available in this environment');
+    }
+    
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   }
 }
 

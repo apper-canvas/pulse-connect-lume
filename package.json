@@ -21,9 +21,10 @@
     "date-fns": "^4.1.0",
     "react-redux": "^9.2.0",
     "@reduxjs/toolkit": "2.7.0",
-    "@emoji-mart/data": "^1.1.2",
+"@emoji-mart/data": "^1.1.2",
     "@emoji-mart/react": "^1.1.1",
-    "@heroicons/react": "^2.0.18"
+    "@heroicons/react": "^2.0.18",
+    "file-type": "^19.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
