@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { BellIcon } from "@heroicons/react/24/outline";
-import { BellSolidIcon } from "@heroicons/react/24/solid";
-import Button from "@/components/atoms/Button";
-import NotificationItem from "@/components/molecules/NotificationItem";
-import ApperIcon from "@/components/ApperIcon";
-import { useNotifications } from "@/contexts/NotificationContext";
+import React, { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { BellIcon } from '@heroicons/react/24/outline'
+import { BellIcon as BellSolidIcon } from '@heroicons/react/24/solid'
+import Button from '@/components/atoms/Button'
+import NotificationItem from '@/components/molecules/NotificationItem'
+import ApperIcon from '@/components/ApperIcon'
+import { useNotifications } from '@/contexts/NotificationContext'
 
 const NotificationDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
