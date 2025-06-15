@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { BellIcon } from '@heroicons/react/24/outline';
-import { BellIcon as BellSolidIcon } from '@heroicons/react/24/solid';
-import Button from '@/components/atoms/Button';
-import NotificationItem from '@/components/molecules/NotificationItem';
-import ApperIcon from '@/components/ApperIcon';
-import { useNotifications } from '@/contexts/NotificationContext';
+import React, { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { BellIcon } from "@heroicons/react/24/outline";
+import { BellSolidIcon } from "@heroicons/react/24/solid";
+import Button from "@/components/atoms/Button";
+import NotificationItem from "@/components/molecules/NotificationItem";
+import ApperIcon from "@/components/ApperIcon";
+import { useNotifications } from "@/contexts/NotificationContext";
 
 const NotificationDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,41 +29,50 @@ const NotificationDropdown = () => {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Notification Bell Button */}
-      <Button
+    {/* Notification Bell Button */}
+    <Button
         variant="ghost"
         size="sm"
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2"
-      >
-        {unreadCount > 0 ? (
-          <BellSolidIcon className="w-6 h-6 text-primary" />
-        ) : (
-          <BellIcon className="w-6 h-6 text-surface-600" />
-        )}
-        
+        className="relative p-2">
+        {unreadCount > 0 ? <BellSolidIcon className="w-6 h-6 text-primary" /> : <BellIcon className="w-6 h-6 text-surface-600" />}
         {/* Unread Count Badge */}
-        {unreadCount > 0 && (
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium"
-          >
-            {unreadCount > 99 ? '99+' : unreadCount}
-          </motion.div>
-        )}
-      </Button>
+        {unreadCount > 0 && <motion.div
+            initial={{
+                scale: 0
+            }}
+            animate={{
+                scale: 1
+            }}
+            className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
+{unreadCount > 99 ? "99+" : unreadCount}
+        </motion.div>}
+    </Button>
 
       {/* Dropdown */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-lg border border-surface-200 z-50 max-h-96 overflow-hidden"
-          >
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[9998]"
+              onClick={() => setIsOpen(false)}
+            />
+            
+            {/* Dropdown Modal */}
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-2xl border border-surface-200 z-[9999] max-h-96 overflow-hidden"
+              style={{
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 10px 20px -5px rgba(0, 0, 0, 0.1)'
+              }}
+            >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-surface-100">
               <div className="flex items-center space-x-2">
@@ -139,7 +148,8 @@ const NotificationDropdown = () => {
                 </Button>
               </div>
             )}
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
