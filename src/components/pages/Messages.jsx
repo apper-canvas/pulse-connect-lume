@@ -10,20 +10,21 @@ import EmptyState from "@/components/molecules/EmptyState";
 import ApperIcon from "@/components/ApperIcon";
 import EmojiPicker from "@/components/molecules/EmojiPicker";
 import { messageService, userService } from "@/services";
-
 const Messages = () => {
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [users, setUsers] = useState({});
   const [newMessage, setNewMessage] = useState('');
-  const [loading, setLoading] = useState(true);
+const [loading, setLoading] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [sending, setSending] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showOptionsDropdown, setShowOptionsDropdown] = useState(false);
+  const [callingState, setCallingState] = useState({ isCall: false, isVideo: false });
   const messagesEndRef = useRef(null);
+  const optionsDropdownRef = useRef(null);
   const currentUserId = '1'; // Demo current user
-
   useEffect(() => {
     loadConversations();
   }, []);
@@ -34,9 +35,22 @@ const Messages = () => {
     }
   }, [activeConversation]);
 
-  useEffect(() => {
+useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (optionsDropdownRef.current && !optionsDropdownRef.current.contains(event.target)) {
+        setShowOptionsDropdown(false);
+      }
+    };
+
+    if (showOptionsDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showOptionsDropdown]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -112,10 +126,127 @@ const Messages = () => {
     }
 };
 
+  const handleCall = async () => {
+    if (!activeConversation || callingState.isCall) return;
+    
+    const partner = users[activeConversation.partnerId];
+    setCallingState(prev => ({ ...prev, isCall: true }));
+    
+    try {
+      toast.info(`Calling ${partner?.displayName || 'Unknown User'}...`);
+      
+      // Simulate call connection delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Simulate call connection (random success/failure for demo)
+      if (Math.random() > 0.3) {
+        toast.success(`Connected to ${partner?.displayName || 'Unknown User'}`);
+        // In a real app, this would integrate with WebRTC or calling service
+        setTimeout(() => {
+          toast.info('Call ended');
+        }, 5000);
+      } else {
+        toast.error(`${partner?.displayName || 'Unknown User'} is unavailable`);
+      }
+    } catch (error) {
+      toast.error('Failed to initiate call');
+    } finally {
+      setTimeout(() => {
+        setCallingState(prev => ({ ...prev, isCall: false }));
+      }, 1000);
+    }
+  };
+
+  const handleVideoCall = async () => {
+    if (!activeConversation || callingState.isVideo) return;
+    
+    const partner = users[activeConversation.partnerId];
+    setCallingState(prev => ({ ...prev, isVideo: true }));
+    
+    try {
+      toast.info(`Starting video call with ${partner?.displayName || 'Unknown User'}...`);
+      
+      // Simulate video call connection delay
+      await new Promise(resolve => setTimeout(resolve, 2500));
+      
+      // Simulate video call connection (random success/failure for demo)
+      if (Math.random() > 0.2) {
+        toast.success(`Video call connected with ${partner?.displayName || 'Unknown User'}`);
+        // In a real app, this would open video calling interface
+        setTimeout(() => {
+          toast.info('Video call ended');
+        }, 8000);
+      } else {
+        toast.error('Video call failed to connect');
+      }
+    } catch (error) {
+      toast.error('Failed to start video call');
+    } finally {
+      setTimeout(() => {
+        setCallingState(prev => ({ ...prev, isVideo: false }));
+      }, 1000);
+    }
+  };
+
+  const handleMuteConversation = async () => {
+    if (!activeConversation) return;
+    
+    const partner = users[activeConversation.partnerId];
+    try {
+      // In a real app, this would call API to mute/unmute
+      await new Promise(resolve => setTimeout(resolve, 300));
+      toast.success(`${partner?.displayName || 'Conversation'} has been muted`);
+      setShowOptionsDropdown(false);
+    } catch (error) {
+      toast.error('Failed to mute conversation');
+    }
+  };
+
+  const handleArchiveConversation = async () => {
+    if (!activeConversation) return;
+    
+    const partner = users[activeConversation.partnerId];
+    try {
+      // In a real app, this would call API to archive
+      await new Promise(resolve => setTimeout(resolve, 400));
+      toast.success(`Conversation with ${partner?.displayName || 'Unknown User'} archived`);
+      
+      // Remove from conversations list
+      setConversations(prev => prev.filter(conv => conv.partnerId !== activeConversation.partnerId));
+      setActiveConversation(null);
+      setShowOptionsDropdown(false);
+    } catch (error) {
+      toast.error('Failed to archive conversation');
+    }
+  };
+
+  const handleDeleteConversation = async () => {
+    if (!activeConversation) return;
+    
+    const partner = users[activeConversation.partnerId];
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete your conversation with ${partner?.displayName || 'Unknown User'}? This action cannot be undone.`
+    );
+    
+    if (!confirmDelete) return;
+    
+    try {
+      // In a real app, this would call API to delete
+      await new Promise(resolve => setTimeout(resolve, 500));
+      toast.success('Conversation deleted');
+      
+      // Remove from conversations list
+      setConversations(prev => prev.filter(conv => conv.partnerId !== activeConversation.partnerId));
+      setActiveConversation(null);
+      setShowOptionsDropdown(false);
+    } catch (error) {
+      toast.error('Failed to delete conversation');
+    }
+  };
+
   const handleEmojiSelect = (emoji) => {
     setNewMessage(prev => prev + emoji);
   };
-
   if (loading) {
     return (
       <div className="h-full bg-background">
@@ -261,16 +392,98 @@ const Messages = () => {
                     <p className="text-sm text-success">Online now</p>
                   </div>
                   
-                  <div className="flex space-x-1">
-                    <Button variant="ghost" size="sm">
+<div className="flex space-x-1 relative">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={handleCall}
+                      disabled={callingState.isCall || callingState.isVideo}
+                      loading={callingState.isCall}
+                      title="Voice call"
+                    >
                       <ApperIcon name="Phone" className="w-5 h-5" />
                     </Button>
-                    <Button variant="ghost" size="sm">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={handleVideoCall}
+                      disabled={callingState.isCall || callingState.isVideo}
+                      loading={callingState.isVideo}
+                      title="Video call"
+                    >
                       <ApperIcon name="Video" className="w-5 h-5" />
                     </Button>
-                    <Button variant="ghost" size="sm">
-                      <ApperIcon name="MoreVertical" className="w-5 h-5" />
-                    </Button>
+                    <div className="relative" ref={optionsDropdownRef}>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => setShowOptionsDropdown(!showOptionsDropdown)}
+                        title="More options"
+                      >
+                        <ApperIcon name="MoreVertical" className="w-5 h-5" />
+                      </Button>
+                      
+                      <AnimatePresence>
+                        {showOptionsDropdown && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                            transition={{ duration: 0.15 }}
+                            className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-lg border border-surface-200 py-2 z-50"
+                          >
+                            <button
+                              onClick={handleMuteConversation}
+                              className="w-full px-4 py-2 text-left text-sm text-surface-700 hover:bg-surface-50 flex items-center space-x-3"
+                            >
+                              <ApperIcon name="VolumeX" className="w-4 h-4" />
+                              <span>Mute conversation</span>
+                            </button>
+                            
+                            <button
+                              onClick={() => {
+                                toast.info('Search functionality coming soon');
+                                setShowOptionsDropdown(false);
+                              }}
+                              className="w-full px-4 py-2 text-left text-sm text-surface-700 hover:bg-surface-50 flex items-center space-x-3"
+                            >
+                              <ApperIcon name="Search" className="w-4 h-4" />
+                              <span>Search in conversation</span>
+                            </button>
+                            
+                            <button
+                              onClick={() => {
+                                const partner = users[activeConversation.partnerId];
+                                toast.info(`Viewing ${partner?.displayName || 'Unknown User'}'s profile`);
+                                setShowOptionsDropdown(false);
+                              }}
+                              className="w-full px-4 py-2 text-left text-sm text-surface-700 hover:bg-surface-50 flex items-center space-x-3"
+                            >
+                              <ApperIcon name="User" className="w-4 h-4" />
+                              <span>View profile</span>
+                            </button>
+                            
+                            <div className="border-t border-surface-200 my-2"></div>
+                            
+                            <button
+                              onClick={handleArchiveConversation}
+                              className="w-full px-4 py-2 text-left text-sm text-surface-700 hover:bg-surface-50 flex items-center space-x-3"
+                            >
+                              <ApperIcon name="Archive" className="w-4 h-4" />
+                              <span>Archive conversation</span>
+                            </button>
+                            
+                            <button
+                              onClick={handleDeleteConversation}
+                              className="w-full px-4 py-2 text-left text-sm text-error hover:bg-error/5 flex items-center space-x-3"
+                            >
+                              <ApperIcon name="Trash2" className="w-4 h-4" />
+                              <span>Delete conversation</span>
+                            </button>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   </div>
                 </div>
 
