@@ -101,7 +101,14 @@ class PostService {
     if (index === -1) throw new Error('Post not found');
     
     this.data[index].commentsCount += 1;
-    return { ...this.data[index] };
+return { ...this.data[index] };
+  }
+
+  async getLikedPosts(userId) {
+    await delay(300);
+    const likedPosts = this.data.filter(post => post.likes.includes(userId));
+    const sorted = likedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    return [...sorted];
   }
 }
 
