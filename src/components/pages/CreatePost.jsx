@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -255,7 +255,7 @@ const CreatePost = () => {
                     disabled={isSubmitting}
                   />
                   
-                  <Button
+<Button
                     type="button"
                     variant="ghost"
                     size="sm"
@@ -266,8 +266,24 @@ const CreatePost = () => {
                     <ApperIcon name="Image" className="w-5 h-5 mr-2" />
                     Media
                   </Button>
+                </div>
+              </div>
+              {/* Post Actions */}
+              <div className="flex items-center justify-between mt-4 pt-4 border-t border-surface-200">
+                <div className="flex items-center space-x-2 relative">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isSubmitting}
+                    className="text-secondary hover:bg-secondary/10"
+                  >
+                    <ApperIcon name="Image" className="w-5 h-5 mr-2" />
+                    Media
+                  </Button>
                   
-<Button
+                  <Button
                     type="button"
                     variant="ghost"
                     size="sm"
@@ -283,7 +299,8 @@ const CreatePost = () => {
                     onToggle={setShowEmojiPicker}
                     onEmojiSelect={handleEmojiSelect}
                     buttonClassName="mr-2"
-                    position="top-left"
+                    position="top-right"
+                    containerClassName="z-[100] relative"
                   />
                 </div>
 

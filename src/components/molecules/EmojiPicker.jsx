@@ -1,9 +1,9 @@
-import { useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import data from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
-import Button from '@/components/atoms/Button';
-import ApperIcon from '@/components/ApperIcon';
+import React, { useEffect, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
+import Button from "@/components/atoms/Button";
+import ApperIcon from "@/components/ApperIcon";
 
 const EmojiPicker = ({ 
   isOpen, 
@@ -37,16 +37,22 @@ const EmojiPicker = ({
     onToggle(false);
   };
 
-  const getPositionClasses = () => {
+const getPositionClasses = () => {
     switch (position) {
       case 'top-left':
-        return 'bottom-full left-0 mb-2';
+        return 'bottom-full left-0 mb-2 z-50';
       case 'top-right':
-        return 'bottom-full right-0 mb-2';
+        return 'bottom-full right-0 mb-2 z-50';
+      case 'bottom-left':
+        return 'top-full left-0 mt-2 z-50';
       case 'bottom-right':
-        return 'top-full right-0 mt-2';
-      default: // bottom-left
-        return 'top-full left-0 mt-2';
+        return 'top-full right-0 mt-2 z-50';
+      case 'top-center':
+        return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50';
+      case 'bottom-center':
+        return 'top-full left-1/2 transform -translate-x-1/2 mt-2 z-50';
+      default:
+        return 'top-full left-0 mt-2 z-50';
     }
   };
 
@@ -57,43 +63,32 @@ const EmojiPicker = ({
         variant="ghost"
         size="sm"
         onClick={() => onToggle(!isOpen)}
-        className={`text-accent hover:bg-accent/10 ${buttonClassName}`}
+        className={`p-2 hover:bg-surface-100 ${buttonClassName}`}
       >
-        <ApperIcon name="Smile" className="w-5 h-5" />
+        <ApperIcon name="smile" size={20} />
       </Button>
-
+      
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -10 }}
-            transition={{ duration: 0.15 }}
-            className={`absolute z-50 ${getPositionClasses()} ${pickerClassName}`}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            transition={{ duration: 0.2 }}
+            className={`absolute ${getPositionClasses()} bg-white rounded-lg shadow-xl border border-surface-200 z-[100] backdrop-blur-sm ${pickerClassName}`}
+            style={{ zIndex: 1000 }}
           >
-            <div className="bg-surface rounded-xl border border-surface-200 shadow-lg overflow-hidden">
+            <div className="p-2">
               <Picker
                 data={data}
                 onEmojiSelect={handleEmojiSelect}
                 theme="light"
-                set="native"
-                previewPosition="none"
-                skinTonePosition="search"
+                set="apple"
                 maxFrequentRows={2}
                 perLine={8}
-                emojiSize={20}
-                emojiButtonSize={32}
-                categories={[
-                  'frequent',
-                  'people',
-                  'nature',
-                  'foods',
-                  'activity',
-                  'places',
-                  'objects',
-                  'symbols',
-                  'flags'
-                ]}
+                navPosition="bottom"
+                previewPosition="none"
+                skinTonePosition="none"
               />
             </div>
           </motion.div>
