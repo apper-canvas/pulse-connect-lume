@@ -241,33 +241,17 @@ const CreatePost = () => {
               </div>
             )}
 
-            {/* Post Options */}
+{/* Post Options */}
             <div className="border-t border-surface-100 pt-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*,video/*"
-                    multiple
-                    onChange={handleFileSelect}
-                    className="hidden"
-                    disabled={isSubmitting}
-                  />
-                  
-<Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isSubmitting || mediaFiles.length >= 4}
-                    className="text-primary hover:bg-primary/10"
-                  >
-                    <ApperIcon name="Image" className="w-5 h-5 mr-2" />
-                    Media
-                  </Button>
-                </div>
-              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,video/*"
+                multiple
+                onChange={handleFileSelect}
+                className="hidden"
+                disabled={isSubmitting}
+              />
               {/* Post Actions */}
               <div className="flex items-center justify-between mt-4 pt-4 border-t border-surface-200">
                 <div className="flex items-center space-x-2 relative">
