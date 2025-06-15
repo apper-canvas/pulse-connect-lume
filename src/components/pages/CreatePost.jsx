@@ -1,11 +1,12 @@
-import { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import Button from '@/components/atoms/Button';
-import Avatar from '@/components/atoms/Avatar';
-import ApperIcon from '@/components/ApperIcon';
-import { postService, userService } from '@/services';
+import React, { useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import Button from "@/components/atoms/Button";
+import Avatar from "@/components/atoms/Avatar";
+import ApperIcon from "@/components/ApperIcon";
+import EmojiPicker from "@/components/molecules/EmojiPicker";
+import { postService, userService } from "@/services";
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -14,11 +15,12 @@ const CreatePost = () => {
   const [mediaPreview, setMediaPreview] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const fileInputRef = useRef(null);
   const textareaRef = useRef(null);
 
-  // Load current user
-  useState(() => {
+// Load current user
+  React.useEffect(() => {
     userService.getCurrentUser().then(setCurrentUser);
   }, []);
 
@@ -109,6 +111,24 @@ const CreatePost = () => {
       if (!confirmed) return;
     }
     navigate(-1);
+};
+
+  const handleEmojiSelect = (emoji) => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const newContent = content.substring(0, start) + emoji + content.substring(end);
+      setContent(newContent);
+      
+      // Restore cursor position after emoji insertion
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + emoji.length, start + emoji.length);
+      }, 0);
+    } else {
+      setContent(prev => prev + emoji);
+    }
   };
 
   return (
@@ -247,7 +267,7 @@ const CreatePost = () => {
                     Media
                   </Button>
                   
-                  <Button
+<Button
                     type="button"
                     variant="ghost"
                     size="sm"
@@ -258,16 +278,13 @@ const CreatePost = () => {
                     Location
                   </Button>
                   
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    disabled={isSubmitting}
-                    className="text-accent hover:bg-accent/10"
-                  >
-                    <ApperIcon name="Smile" className="w-5 h-5 mr-2" />
-                    Emoji
-                  </Button>
+                  <EmojiPicker
+                    isOpen={showEmojiPicker}
+                    onToggle={setShowEmojiPicker}
+                    onEmojiSelect={handleEmojiSelect}
+                    buttonClassName="mr-2"
+                    position="top-left"
+                  />
                 </div>
 
                 <div className="flex space-x-3">

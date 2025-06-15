@@ -1,14 +1,15 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { formatDistanceToNow } from 'date-fns';
-import { toast } from 'react-toastify';
-import Avatar from '@/components/atoms/Avatar';
-import Button from '@/components/atoms/Button';
-import Input from '@/components/atoms/Input';
-import SkeletonLoader from '@/components/molecules/SkeletonLoader';
-import EmptyState from '@/components/molecules/EmptyState';
-import ApperIcon from '@/components/ApperIcon';
-import { messageService, userService } from '@/services';
+import React, { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { formatDistanceToNow } from "date-fns";
+import { toast } from "react-toastify";
+import Avatar from "@/components/atoms/Avatar";
+import Button from "@/components/atoms/Button";
+import Input from "@/components/atoms/Input";
+import SkeletonLoader from "@/components/molecules/SkeletonLoader";
+import EmptyState from "@/components/molecules/EmptyState";
+import ApperIcon from "@/components/ApperIcon";
+import EmojiPicker from "@/components/molecules/EmojiPicker";
+import { messageService, userService } from "@/services";
 
 const Messages = () => {
   const [conversations, setConversations] = useState([]);
@@ -19,6 +20,7 @@ const Messages = () => {
   const [loading, setLoading] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [sending, setSending] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const messagesEndRef = useRef(null);
   const currentUserId = '1'; // Demo current user
 
@@ -108,6 +110,10 @@ const Messages = () => {
     } finally {
       setSending(false);
     }
+};
+
+  const handleEmojiSelect = (emoji) => {
+    setNewMessage(prev => prev + emoji);
   };
 
   if (loading) {
@@ -311,8 +317,9 @@ const Messages = () => {
                 </div>
 
                 {/* Message Input */}
+{/* Message Input */}
                 <div className="p-4 border-t border-surface-200">
-                  <form onSubmit={handleSendMessage} className="flex space-x-3">
+                  <form onSubmit={handleSendMessage} className="flex items-end space-x-3">
                     <div className="flex-1">
                       <Input
                         placeholder="Type a message..."
@@ -321,6 +328,12 @@ const Messages = () => {
                         className="rounded-full"
                       />
                     </div>
+                    <EmojiPicker
+                      isOpen={showEmojiPicker}
+                      onToggle={setShowEmojiPicker}
+                      onEmojiSelect={handleEmojiSelect}
+                      position="top-right"
+                    />
                     <Button
                       type="submit"
                       variant="primary"
