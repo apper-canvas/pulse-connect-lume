@@ -41,7 +41,26 @@ class CommentService {
     const index = this.data.findIndex(item => item.id === id);
     if (index === -1) throw new Error('Comment not found');
     
-    this.data[index] = { ...this.data[index], ...updates };
+this.data[index] = { ...this.data[index], ...updates };
+    return { ...this.data[index] };
+  }
+
+  async toggleLike(commentId, userId) {
+    await delay(200);
+    const index = this.data.findIndex(item => item.id === commentId);
+    if (index === -1) throw new Error('Comment not found');
+    
+    const comment = this.data[index];
+    const likes = comment.likes || [];
+    const isLiked = likes.includes(userId);
+    
+    if (isLiked) {
+      comment.likes = likes.filter(id => id !== userId);
+    } else {
+      comment.likes = [...likes, userId];
+    }
+    
+    this.data[index] = { ...comment };
     return { ...this.data[index] };
   }
 

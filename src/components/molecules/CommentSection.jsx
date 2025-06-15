@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { formatDistanceToNow } from 'date-fns';
-import { toast } from 'react-toastify';
-import Avatar from '@/components/atoms/Avatar';
-import Button from '@/components/atoms/Button';
-import Input from '@/components/atoms/Input';
-import ApperIcon from '@/components/ApperIcon';
-import { commentService, userService, postService } from '@/services';
+import React, { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { formatDistanceToNow } from "date-fns";
+import { toast } from "react-toastify";
+import Avatar from "@/components/atoms/Avatar";
+import Button from "@/components/atoms/Button";
+import Input from "@/components/atoms/Input";
+import ApperIcon from "@/components/ApperIcon";
+import { commentService, postService, userService } from "@/services";
 
 const CommentSection = ({ postId, onCommentAdded }) => {
   const [comments, setComments] = useState([]);
@@ -14,11 +14,13 @@ const CommentSection = ({ postId, onCommentAdded }) => {
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [likedComments, setLikedComments] = useState({});
+  const [replyMode, setReplyMode] = useState({});
+  const [replyText, setReplyText] = useState({});
 
   useEffect(() => {
     loadComments();
   }, [postId]);
-
   const loadComments = async () => {
     try {
       setLoading(true);
@@ -68,9 +70,92 @@ const CommentSection = ({ postId, onCommentAdded }) => {
       toast.success('Comment added!');
     } catch (error) {
       toast.error('Failed to add comment');
-    } finally {
+} finally {
       setSubmitting(false);
     }
+  };
+
+  const handleLike = async (commentId) => {
+    const currentUserId = '1'; // Demo current user
+    
+    try {
+      const isLiked = likedComments[commentId];
+      
+      // Optimistic update
+      setLikedComments(prev => ({
+        ...prev,
+        [commentId]: !isLiked
+      }));
+      
+      // Update comment likes in backend
+      await commentService.toggleLike(commentId, currentUserId);
+      
+      // Update local comments state
+      setComments(prev => prev.map(comment => 
+        comment.id === commentId 
+          ? {
+              ...comment,
+              likes: isLiked 
+                ? (comment.likes || []).filter(id => id !== currentUserId)
+                : [...(comment.likes || []), currentUserId]
+            }
+          : comment
+      ));
+      
+    } catch (error) {
+      // Revert optimistic update on error
+      setLikedComments(prev => ({
+        ...prev,
+        [commentId]: !prev[commentId]
+      }));
+      toast.error('Failed to update like');
+    }
+  };
+
+  const handleReply = (commentId) => {
+    setReplyMode(prev => ({
+      ...prev,
+      [commentId]: !prev[commentId]
+    }));
+    
+    if (!replyMode[commentId]) {
+      setReplyText(prev => ({
+        ...prev,
+        [commentId]: ''
+      }));
+    }
+  };
+
+  const handleSubmitReply = async (commentId) => {
+    const currentUserId = '1'; // Demo current user
+    const reply = replyText[commentId];
+    
+    if (!reply?.trim()) return;
+    
+    try {
+      const replyData = {
+        postId,
+        userId: currentUserId,
+        content: reply.trim(),
+        parentId: commentId
+      };
+      
+      const newReply = await commentService.create(replyData);
+      
+      setComments(prev => [...prev, newReply]);
+      setReplyText(prev => ({
+        ...prev,
+        [commentId]: ''
+      }));
+      setReplyMode(prev => ({
+        ...prev,
+        [commentId]: false
+      }));
+      
+      toast.success('Reply added!');
+    } catch (error) {
+      toast.error('Failed to add reply');
+}
   };
 
   if (loading) {
@@ -122,19 +207,59 @@ const CommentSection = ({ postId, onCommentAdded }) => {
                         {comment.content}
                       </p>
                     </div>
-                    <div className="flex items-center space-x-4 mt-1 px-3">
+<div className="flex items-center gap-4 mt-2">
                       <span className="text-xs text-surface-500">
                         {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
                       </span>
-                      <button className="text-xs text-surface-500 hover:text-surface-700 font-medium">
-                        Like
+                      <button
+                        onClick={() => handleLike(comment.id)}
+                        className={`text-xs font-medium transition-colors ${
+                          likedComments[comment.id] 
+                            ? 'text-primary-600 hover:text-primary-700' 
+                            : 'text-surface-500 hover:text-surface-700'
+                        }`}
+                      >
+                        Like {comment.likes?.length > 0 && `(${comment.likes.length})`}
                       </button>
-                      <button className="text-xs text-surface-500 hover:text-surface-700 font-medium">
+                      <button 
+                        onClick={() => handleReply(comment.id)}
+                        className="text-xs text-surface-500 hover:text-surface-700 font-medium"
+                      >
                         Reply
                       </button>
                     </div>
+                    
+                    {replyMode[comment.id] && (
+                      <div className="mt-3 ml-4 border-l-2 border-surface-200 pl-4">
+                        <div className="flex gap-2">
+                          <Input
+                            value={replyText[comment.id] || ''}
+                            onChange={(e) => setReplyText(prev => ({
+                              ...prev,
+                              [comment.id]: e.target.value
+                            }))}
+                            placeholder="Write a reply..."
+                            className="flex-1 text-sm"
+                          />
+                          <Button
+                            size="sm"
+                            onClick={() => handleSubmitReply(comment.id)}
+                            disabled={!replyText[comment.id]?.trim()}
+                          >
+                            Reply
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleReply(comment.id)}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </AnimatePresence>
@@ -170,7 +295,7 @@ const CommentSection = ({ postId, onCommentAdded }) => {
         </form>
       </div>
     </div>
-  );
+);
 };
 
 export default CommentSection;
