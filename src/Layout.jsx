@@ -1,6 +1,7 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import ApperIcon from '@/components/ApperIcon';
+import NotificationDropdown from '@/components/molecules/NotificationDropdown';
 import { routeArray } from '@/config/routes';
 
 const Layout = () => {
@@ -39,8 +40,9 @@ const Layout = () => {
             ))}
           </nav>
 
-          {/* User Menu */}
+{/* User Menu */}
           <div className="flex items-center space-x-4">
+            <NotificationDropdown />
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary p-0.5">
               <div className="w-full h-full rounded-full bg-surface-100 flex items-center justify-center">
                 <ApperIcon name="User" className="w-4 h-4 text-surface-600" />
@@ -70,7 +72,7 @@ const Layout = () => {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <div className="md:hidden flex-shrink-0 bg-surface border-t border-surface-200 z-40">
+<div className="md:hidden flex-shrink-0 bg-surface border-t border-surface-200 z-40">
         <nav className="flex items-center justify-around py-2">
           {routeArray.map((route) => (
             <NavLink
@@ -95,6 +97,11 @@ const Layout = () => {
               )}
             </NavLink>
           ))}
+          
+          {/* Mobile Notification Bell */}
+          <div className="flex flex-col items-center space-y-1 p-2">
+            <NotificationDropdown />
+          </div>
         </nav>
       </div>
     </div>

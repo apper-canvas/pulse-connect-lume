@@ -11,7 +11,7 @@ import ErrorState from '@/components/molecules/ErrorState';
 import PostCreationModal from '@/components/organisms/PostCreationModal';
 import ApperIcon from '@/components/ApperIcon';
 import { userService, postService, followService } from '@/services';
-
+import { useNotifications } from '@/contexts/NotificationContext';
 const Profile = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -20,9 +20,9 @@ const Profile = () => {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('posts');
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [followStats, setFollowStats] = useState({ followers: 0, following: 0 });
+const [followStats, setFollowStats] = useState({ followers: 0, following: 0 });
   const currentUserId = '1'; // Demo current user
-
+  const { addNotification } = useNotifications();
   useEffect(() => {
     loadProfile();
   }, []);
@@ -53,11 +53,18 @@ const Profile = () => {
     }
   };
 
-  const handlePostCreated = (newPost) => {
+const handlePostCreated = async (newPost) => {
     setPosts(prev => [newPost, ...prev]);
     setUser(prev => prev ? { ...prev, postsCount: prev.postsCount + 1 } : null);
+    
+    // Notify followers about new post (simplified - in real app would get actual followers)
+    await addNotification({
+      type: 'post',
+      actorId: currentUserId,
+      postId: newPost.id,
+      message: 'shared a new post'
+    });
   };
-
   const handlePostUpdate = (updatedPost) => {
     setPosts(prev => prev.map(post => 
       post.id === updatedPost.id ? updatedPost : post

@@ -1,0 +1,58 @@
+[
+  {
+    "id": "1",
+    "type": "like",
+    "userId": "1",
+    "actorIds": ["2", "3", "4"],
+    "postId": "1",
+    "message": "liked your post",
+    "isRead": false,
+    "createdAt": "2024-01-15T10:30:00.000Z",
+    "groupCount": 3
+  },
+  {
+    "id": "2",
+    "type": "comment",
+    "userId": "1",
+    "actorIds": ["2"],
+    "postId": "2",
+    "commentId": "1",
+    "message": "commented on your post",
+    "isRead": false,
+    "createdAt": "2024-01-15T09:15:00.000Z",
+    "groupCount": 1
+  },
+  {
+    "id": "3",
+    "type": "follow",
+    "userId": "1",
+    "actorIds": ["3", "4"],
+    "message": "started following you",
+    "isRead": true,
+    "createdAt": "2024-01-14T14:20:00.000Z",
+    "groupCount": 2
+  },
+  {
+    "id": "4",
+    "type": "like",
+    "userId": "1",
+    "actorIds": ["5"],
+    "postId": "3",
+    "message": "liked your post",
+    "isRead": false,
+    "createdAt": "2024-01-14T08:45:00.000Z",
+    "groupCount": 1
+  },
+  {
+    "id": "5",
+    "type": "comment",
+    "userId": "1",
+    "actorIds": ["6", "7"],
+    "postId": "1",
+    "commentId": "2",
+    "message": "commented on your post",
+    "isRead": true,
+    "createdAt": "2024-01-13T16:10:00.000Z",
+    "groupCount": 2
+  }
+]

@@ -7,13 +7,13 @@ import Button from '@/components/atoms/Button';
 import ApperIcon from '@/components/ApperIcon';
 import CommentSection from '@/components/molecules/CommentSection';
 import { postService, userService } from '@/services';
-
+import { useNotifications } from '@/contexts/NotificationContext';
 const PostCard = ({ post, user, onUpdate }) => {
   const [isLiked, setIsLiked] = useState(post.likes?.includes('1') || false);
   const [likesCount, setLikesCount] = useState(post.likes?.length || 0);
   const [showComments, setShowComments] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
-
+  const { addNotification } = useNotifications();
   const handleLike = async () => {
     if (isLiking) return;
     
@@ -25,7 +25,17 @@ const PostCard = ({ post, user, onUpdate }) => {
       setIsLiked(!isLiked);
       setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
       
-      const updatedPost = await postService.toggleLike(post.id, currentUserId);
+const updatedPost = await postService.toggleLike(post.id, currentUserId);
+      
+      // Create notification if this is a like (not unlike) and not user's own post
+      if (updatedPost.likes.includes(currentUserId) && post.userId !== currentUserId) {
+        await addNotification({
+          type: 'like',
+          actorId: currentUserId,
+          postId: post.id,
+          message: 'liked your post'
+        });
+      }
       
       // Update with server response
       setIsLiked(updatedPost.likes.includes(currentUserId));
