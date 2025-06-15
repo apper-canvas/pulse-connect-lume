@@ -1,0 +1,44 @@
+[
+  {
+    "id": "1",
+    "postId": "1",
+    "userId": "2",
+    "content": "Love the bold approach! Gradients are definitely making a comeback in modern design.",
+    "createdAt": "2024-01-15T15:00:00Z"
+  },
+  {
+    "id": "2",
+    "postId": "1",
+    "userId": "3",
+    "content": "This looks amazing! The color transitions are so smooth. What tools did you use?",
+    "createdAt": "2024-01-15T15:30:00Z"
+  },
+  {
+    "id": "3",
+    "postId": "2",
+    "userId": "1",
+    "content": "Absolutely stunning! Santorini sunsets are pure magic ✨",
+    "createdAt": "2024-01-14T19:15:00Z"
+  },
+  {
+    "id": "4",
+    "postId": "2",
+    "userId": "4",
+    "content": "This makes me want to book a trip right now! Beautiful capture 📸",
+    "createdAt": "2024-01-14T20:00:00Z"
+  },
+  {
+    "id": "5",
+    "postId": "3",
+    "userId": "2",
+    "content": "Congratulations! This is huge news. Can't wait to see what you build next 🚀",
+    "createdAt": "2024-01-14T11:00:00Z"
+  },
+  {
+    "id": "6",
+    "postId": "4",
+    "userId": "5",
+    "content": "Such an inspiring way to start the day! Your yoga posts always motivate me 🙏",
+    "createdAt": "2024-01-13T08:15:00Z"
+  }
+]

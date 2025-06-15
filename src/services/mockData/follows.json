@@ -1,0 +1,52 @@
+[
+  {
+    "followerId": "1",
+    "followingId": "2",
+    "createdAt": "2023-12-01T10:00:00Z"
+  },
+  {
+    "followerId": "1",
+    "followingId": "3",
+    "createdAt": "2023-12-05T14:30:00Z"
+  },
+  {
+    "followerId": "1",
+    "followingId": "4",
+    "createdAt": "2023-12-10T09:15:00Z"
+  },
+  {
+    "followerId": "2",
+    "followingId": "1",
+    "createdAt": "2023-12-02T11:45:00Z"
+  },
+  {
+    "followerId": "2",
+    "followingId": "3",
+    "createdAt": "2023-12-08T16:20:00Z"
+  },
+  {
+    "followerId": "3",
+    "followingId": "1",
+    "createdAt": "2023-12-03T13:10:00Z"
+  },
+  {
+    "followerId": "3",
+    "followingId": "4",
+    "createdAt": "2023-12-12T08:45:00Z"
+  },
+  {
+    "followerId": "4",
+    "followingId": "1",
+    "createdAt": "2023-12-06T15:30:00Z"
+  },
+  {
+    "followerId": "4",
+    "followingId": "2",
+    "createdAt": "2023-12-09T12:00:00Z"
+  },
+  {
+    "followerId": "5",
+    "followingId": "1",
+    "createdAt": "2023-12-07T17:45:00Z"
+  }
+]

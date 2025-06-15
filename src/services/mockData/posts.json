@@ -1,0 +1,72 @@
+[
+  {
+    "id": "1",
+    "userId": "1",
+    "content": "Just finished redesigning my portfolio website! The new color scheme is giving me all the feels 🎨 What do you think about bold gradients in web design?",
+    "mediaUrls": ["https://images.unsplash.com/photo-1558655146-364adaf1fcc9?w=600&h=400&fit=crop"],
+    "mediaType": "image",
+    "likes": ["2", "3", "4"],
+    "commentsCount": 8,
+    "createdAt": "2024-01-15T14:30:00Z"
+  },
+  {
+    "id": "2",
+    "userId": "2",
+    "content": "Golden hour magic in Santorini ✨ Sometimes you just have to stop and appreciate the beauty around you. This moment reminded me why I fell in love with photography.",
+    "mediaUrls": ["https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=600&h=400&fit=crop"],
+    "mediaType": "image",
+    "likes": ["1", "3", "4", "5"],
+    "commentsCount": 15,
+    "createdAt": "2024-01-14T18:45:00Z"
+  },
+  {
+    "id": "3",
+    "userId": "3",
+    "content": "Excited to announce that our startup just secured Series A funding! 🚀 Couldn't have done it without this amazing team. Next stop: changing the world, one innovation at a time.",
+    "mediaUrls": [],
+    "mediaType": "text",
+    "likes": ["1", "2", "4", "5"],
+    "commentsCount": 23,
+    "createdAt": "2024-01-14T10:15:00Z"
+  },
+  {
+    "id": "4",
+    "userId": "4",
+    "content": "Morning yoga session complete ✅ There's something magical about starting the day with mindful movement. Remember, it's not about being perfect, it's about being present 🧘‍♀️",
+    "mediaUrls": ["https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=400&fit=crop"],
+    "mediaType": "image",
+    "likes": ["1", "2", "5"],
+    "commentsCount": 12,
+    "createdAt": "2024-01-13T07:30:00Z"
+  },
+  {
+    "id": "5",
+    "userId": "5",
+    "content": "Today's special: Homemade pasta with truffle cream sauce 🍝 The secret is in the timing and a lot of love. Recipe coming to the blog tomorrow!",
+    "mediaUrls": ["https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=600&h=400&fit=crop"],
+    "mediaType": "image",
+    "likes": ["1", "2", "3", "4"],
+    "commentsCount": 19,
+    "createdAt": "2024-01-12T19:20:00Z"
+  },
+  {
+    "id": "6",
+    "userId": "1",
+    "content": "Working late but loving every minute of it! Sometimes the best designs come when you're in the flow state. Coffee count: 4 ☕️",
+    "mediaUrls": [],
+    "mediaType": "text",
+    "likes": ["2", "3"],
+    "commentsCount": 5,
+    "createdAt": "2024-01-12T22:15:00Z"
+  },
+  {
+    "id": "7",
+    "userId": "2",
+    "content": "Throwback to my adventure in Iceland 🇮🇸 The Northern Lights were absolutely breathtaking. Nature never fails to humble and inspire me.",
+    "mediaUrls": ["https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=600&h=400&fit=crop"],
+    "mediaType": "image",
+    "likes": ["1", "3", "4", "5"],
+    "commentsCount": 27,
+    "createdAt": "2024-01-11T16:40:00Z"
+  }
+]
